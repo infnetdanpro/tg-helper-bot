@@ -1,5 +1,5 @@
 migrations
 __pycache__/
 *.db
-*.txt
+text/
 config.py
