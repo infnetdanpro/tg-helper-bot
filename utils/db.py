@@ -1,11 +1,6 @@
 import asyncio
 from databases import Database
-
-try:
-    from conf import config
-except:
-    config = {'DSN': 'sqlite:///telegram.db'}
-
+from conf import config
 
 
 class DatabaseTG(Database):
@@ -32,7 +27,7 @@ class DatabaseTG(Database):
             await self.execute(q)
 
 
-db = DatabaseTG(config.get('DSN'))
+db = DatabaseTG(config.DSN)
 
 
 if __name__ == '__main__':
