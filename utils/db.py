@@ -19,6 +19,7 @@ class DatabaseTG(Database):
             CREATE TABLE IF NOT EXISTS message_log (
                id INTEGER PRIMARY KEY,
                user_id INTEGER,
+               message_id INTEGER,
                message TEXT,
                FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
             );"""

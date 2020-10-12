@@ -1,12 +1,25 @@
 # This file include function by name
+import os
+from random import randint
+import markovify
+from random import randint
+import requests
+from conf import config
 
 
-def cats(search_query: str = 'cats'):
+commands = {}
+
+
+def command(command): 
+    def wrapper(func): 
+        commands[command[1:]] = func
+        return func
+    return wrapper
+
+
+@command('/cats')
+def get_random_cats(search_query: str = 'cats'):
     """Get random cats"""
-    from random import randint
-    import requests
-    from conf import config
-
     resp: dict = {
         'result_type': None, 
         'result': None
@@ -25,17 +38,15 @@ def cats(search_query: str = 'cats'):
     return resp
 
 
+@command('/echo')
 def echo(text: str):
     """Test echo function"""
     return {'result_type': 'text', 'result': text}
 
 
+@command('/bad_harry')
 def bad_harry(*args):
     """Very bad Harry Potter 18+"""
-    import os
-    from random import randint
-    import markovify
-
     with open('text\\sodom.txt', encoding='utf-8') as f:
         text_a = f.read()
 
