@@ -18,23 +18,19 @@ class TelegramBot:
         self.token: str = token
         self.API_URL: str = f'https://api.telegram.org/bot{self.token}/'
 
-    def command_list(self) -> dict:
-        """List of each function with docstring""" 
-        return COMMANDS
+    async def do_request(self, query: str, params: dict = None) -> dict:
+        if not params:
+            params = {}
 
-    def generate_description(self) -> str:
-        command_list = ''
-        
-        for command, about in COMMANDS.items():
-            command_list += f""" * {command}: {about}"""
-
-        text = f"""*Commands on this bot:*{command_list}"""
-        return text
+        async with aiohttp.ClientSession() as session:
+            async with session.get(query, params=params) as resp:
+                return await resp.json()
 
 
     async def run_function(self, func, *args, **kwargs):
         # TODO: standartize in future functions
         self.func_result = func(*args, **kwargs)
+
         return self.func_result
 
     # API
@@ -45,10 +41,7 @@ class TelegramBot:
             params['offset'] = offset
         query: str = self.API_URL + 'getUpdates'
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(query, params=params) as resp:
-                print(resp.url)
-                return await resp.json()
+        return await self.do_request(query, params)
 
     async def send_message(self, params: dict) -> dict:
         """Send answer for messages
@@ -57,9 +50,7 @@ class TelegramBot:
         """
         query = self.API_URL + 'sendMessage'
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(query, params=params) as resp:
-                return await resp.json()
+        return await self.do_request(query, params)
 
     async def send_photo(self, params: dict) -> dict:
         """Send photo for messages
@@ -68,6 +59,4 @@ class TelegramBot:
         """
         query = self.API_URL + 'sendPhoto'
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(query, params=params) as resp:
-                return await resp.json()
+        return await self.do_request(query, params)

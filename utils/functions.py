@@ -11,9 +11,9 @@ from models.response import BaseResponse, ResultTypes
 
 commands = {}
 
-def command(comand_name): 
+def command(command_name): 
     def wrap(f): 
-        commands[comand_name[1:]] = f
+        commands[command_name[1:]] = f
         return f
     return wrap
 
@@ -81,7 +81,7 @@ def command_start(*args) -> dict:
     for name, f in commands.items():
         if name == 'start':
             continue
-            
+
         text += f'/{name}: {f.__doc__}; '
 
     resp.result = text

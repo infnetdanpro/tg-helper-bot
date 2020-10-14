@@ -24,8 +24,7 @@ async def main():
             telegram_response = tg_resp = serialize(data.get('result', []))
             ready = bool(data['ok'])
 
-            if ready:
-                # print(tg_resp.results)
+            if tg_resp.results and ready:
                 result = tg_resp.results[0]
                 offset = result.update_id
                 offset += 1
