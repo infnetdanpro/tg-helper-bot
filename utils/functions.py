@@ -1,29 +1,27 @@
 # This file include function by name
 import os
-from random import randint
 import markovify
-from random import randint
 import requests
+import itertools
+
+from random import randint
 from conf import config
+from models.response import BaseResponse, ResultTypes
 
 
 commands = {}
 
-
-def command(command): 
-    def wrapper(func): 
-        commands[command[1:]] = func
-        return func
-    return wrapper
+def command(comand_name): 
+    def wrap(f): 
+        commands[comand_name[1:]] = f
+        return f
+    return wrap
 
 
 @command('/cats')
-def get_random_cats(search_query: str = 'cats'):
+def command_random_cats(search_query: str = 'cats') -> dict:
     """Get random cats"""
-    resp: dict = {
-        'result_type': None, 
-        'result': None
-    }
+    resp = BaseResponse()
 
     headers = {'Authorization': config.PEXELS_IMAGE_API_TOKEN}
     params = {'query': search_query or 'cats', 'page': randint(1,2852), 'per_page': 1}
@@ -32,21 +30,26 @@ def get_random_cats(search_query: str = 'cats'):
     data: dict = r.json()
     
     if r.status_code == 200 and data:
-        resp['result_type'] = 'photo'
-        resp['result']: str = data['photos'][-1]['src']['large']
+        resp.result_type = ResultTypes.photo.value
+        resp.result = data['photos'][-1]['src']['large']
     
-    return resp
+    return resp.dict()
 
 
 @command('/echo')
-def echo(text: str):
+def command_echo(text: str) -> dict:
     """Test echo function"""
-    return {'result_type': 'text', 'result': text}
+    resp = BaseResponse()
+    resp.result = text
+
+    return resp.dict()
 
 
 @command('/bad_harry')
-def bad_harry(*args):
+def command_bad_harry(*args) -> dict:
     """Very bad Harry Potter 18+"""
+    resp = BaseResponse()
+
     with open('text\\sodom.txt', encoding='utf-8') as f:
         text_a = f.read()
 
@@ -59,11 +62,28 @@ def bad_harry(*args):
     # model_combo.compile(inplace=True)
 
     # TODO: use other way to create short sentence
-    while True:
+    for i in itertools.count(1):
         res = model_combo.make_short_sentence(max_chars=randint(50, 300), tries=randint(50, 500))
 
         if not res:
             continue
         if 'гарри' in res.lower() and res.endswith('.'):
             text = res[:1].title() + res[1:]
-            return {'result_type': 'text', 'result': text}
+            resp.result = text
+            return resp.dict()
+
+
+@command('/start')
+def command_start(*args) -> dict:
+    resp = BaseResponse()
+
+    text = ''
+    for name, f in commands.items():
+        if name == 'start':
+            continue
+            
+        text += f'/{name}: {f.__doc__}; '
+
+    resp.result = text
+    
+    return resp.dict()

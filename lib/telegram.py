@@ -47,8 +47,8 @@ class TelegramBot:
 
         async with aiohttp.ClientSession() as session:
             async with session.get(query, params=params) as resp:
-                resp: dict = await resp.json()
-                return resp
+                print(resp.url)
+                return await resp.json()
 
     async def send_message(self, params: dict) -> dict:
         """Send answer for messages
@@ -59,8 +59,7 @@ class TelegramBot:
 
         async with aiohttp.ClientSession() as session:
             async with session.get(query, params=params) as resp:
-                resp: dict = await resp.json()
-                return resp
+                return await resp.json()
 
     async def send_photo(self, params: dict) -> dict:
         """Send photo for messages
@@ -71,5 +70,4 @@ class TelegramBot:
 
         async with aiohttp.ClientSession() as session:
             async with session.get(query, params=params) as resp:
-                resp: dict = await resp.json()
-                return resp
+                return await resp.json()

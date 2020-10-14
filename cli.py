@@ -15,5 +15,6 @@ def seed():
 
 cli = click.CommandCollection(sources=[db])
 
+
 if __name__ == '__main__':
     cli()
