@@ -1,14 +1,5 @@
 import aiohttp
 import typing
-from utils import functions
-# Что я хочу от бота
-
-# 1. Команды
-# 2. По командам - функции
-# 3. Стандарт ответа
-
-
-COMMANDS = {name: getattr(functions, name).__doc__ for name in dir(functions) if not name.startswith('__')}
 
 
 class TelegramBot:
@@ -30,17 +21,14 @@ class TelegramBot:
     async def run_function(self, func, *args, **kwargs):
         # TODO: standartize in future functions
         self.func_result = func(*args, **kwargs)
-
         return self.func_result
 
-    # API
     async def get_updates(self, timeout: int = 30, offset: int = 0) -> dict:
         """Pull latest events from bot"""
         params = {'timeout': timeout}
         if offset:
             params['offset'] = offset
         query: str = self.API_URL + 'getUpdates'
-
         return await self.do_request(query, params)
 
     async def send_message(self, params: dict) -> dict:
@@ -49,7 +37,6 @@ class TelegramBot:
         text: str
         """
         query = self.API_URL + 'sendMessage'
-
         return await self.do_request(query, params)
 
     async def send_photo(self, params: dict) -> dict:
@@ -58,5 +45,4 @@ class TelegramBot:
         text: str
         """
         query = self.API_URL + 'sendPhoto'
-
         return await self.do_request(query, params)

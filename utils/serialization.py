@@ -2,6 +2,9 @@ from models.response import TelegramResponse, TelegramEntity, TelegramMessage, T
 
 
 def serialize_response(results: []) -> TelegramResponse:
+    """
+    Serializing response from telegram API to Dataclass objects
+    """
     telegram_response = TelegramResponse(results=[TelegramEntity(**row) for row in results])
 
     for i, row in enumerate(telegram_response.results):

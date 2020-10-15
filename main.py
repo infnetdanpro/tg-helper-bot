@@ -14,6 +14,9 @@ logging.basicConfig(level=logging.INFO)
 
 
 async def send_response(command: str, message: str, function, chat_id: int):
+    """
+    Dynamic choose function for send response to user (result of functions)
+    """
     response = {
         'chat_id': chat_id, 
         'text': 'Command not found'
@@ -54,7 +57,7 @@ async def main():
             last_chat_text = result.message.text
             last_chat_id = result.message.chat.id
             last_chat_name = result.message.chat.first_name
-            
+
             command, message = command_parser.parse_user_message(last_chat_text)
             await send_response(command, message, bot_commands.get(command), last_chat_id)
 
