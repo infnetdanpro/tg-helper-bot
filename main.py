@@ -21,6 +21,7 @@ async def send_response(command: str, message: str, function, chat_id: int):
         'chat_id': chat_id, 
         'text': 'Command not found'
     }
+    
     if not function:
         return await tg_app.send_message(response)
     
@@ -34,7 +35,8 @@ async def send_response(command: str, message: str, function, chat_id: int):
     
     result_type = result['result_type']
     response[result['result_type']] = result['result']
-
+    if function.__name__.endswith('cmd'):
+        response['parse_mode'] = 'MarkdownV2'
     # Send typed response
     await send_type[result_type](params=response)
 

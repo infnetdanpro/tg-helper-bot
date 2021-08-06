@@ -18,22 +18,22 @@ def command(command_name):
     return wrap
 
 
-@command('/cats')
-def command_random_cats(search_query: str = 'cats') -> dict:
-    """Get random cats"""
-    resp = BaseResponse()
-
-    headers = {'Authorization': config.PEXELS_IMAGE_API_TOKEN}
-    params = {'query': search_query or 'cats', 'page': randint(1,2852), 'per_page': 1}
-
-    r = requests.get(url=config.PEXELS_IMAGE_API_URL, params=params, headers=headers)
-    data: dict = r.json()
+# @command('/cats')
+# def command_random_cats(search_query: str = 'cats') -> dict:
+#    """Get random cats"""
+#    resp = BaseResponse()
+#
+#    headers = {'Authorization': config.PEXELS_IMAGE_API_TOKEN}
+#    params = {'query': search_query or 'cats', 'page': randint(1,2852), 'per_page': 1}
+#
+#    r = requests.get(url=config.PEXELS_IMAGE_API_URL, params=params, headers=headers)
+#    data: dict = r.json()
     
-    if r.status_code == 200 and data:
-        resp.result_type = ResultTypes.photo.value
-        resp.result = data['photos'][-1]['src']['large']
-    
-    return resp.dict()
+#    if r.status_code == 200 and data:
+#        resp.result_type = ResultTypes.photo.value
+#        resp.result = data['photos'][-1]['src']['large']
+#    
+#    return resp.dict()
 
 
 @command('/echo')
@@ -46,7 +46,6 @@ def command_echo(text: str) -> dict:
 
 @command('/start')
 def command_start(*args) -> dict:
-    print('11111111111111')
     resp = BaseResponse()
 
     text = ''
@@ -54,27 +53,42 @@ def command_start(*args) -> dict:
         if name == 'start':
             continue
 
-        text += f'/{name}: {f.__doc__}; '
+        text += f"""/{name}: {f.__doc__};
+"""
 
     resp.result = text
     
     return resp.dict()
 
 
-@command('/ngrok')
-def command_cmd(password) -> dict:
-    """ Run ngrok tunnel on server: password"""
+@command('/public_domain')
+def command_domain(*args, **kwargs) -> dict:
+    """ Show public domain for server"""
     resp = BaseResponse()
-    
-    if password != '82828asdkja':
-        resp.result = 'Bad authorization'
-        return resp.dict()
     try:
         r = requests.get('http://127.0.0.1:4040/api/tunnels')
         resp.result = str(r.json()['tunnels'][0]['public_url'])
     except Exception as e:
         resp.result = str(e)
 
+    return resp.dict()
+
+
+@command('/cmd')
+def command_cmd(*args):
+    """ Server console"""
+    resp = BaseResponse()
+    params = list(args)[0].split(' ')
+    auth = params.pop(0)
+    if auth == config.AUTH:
+        try:
+            r = subprocess.check_output(params)
+            resp.result = f"""```{r.decode('utf-8')}```"""
+        except Exception as e:
+            resp.result = str(e)
+        return resp.dict()
+
+    resp.result = 'Wrong auth'
     return resp.dict()
 
 
