@@ -48,7 +48,7 @@ async def main():
         # Serialize data
         telegram_response = tg_resp = serialize(data.get('result', []))
         ready = bool(data['ok'])
-
+        
         if tg_resp.results and ready:
             result = tg_resp.results[0]
             offset = result.update_id
@@ -59,6 +59,8 @@ async def main():
             last_chat_name = result.message.chat.first_name
 
             command, message = command_parser.parse_user_message(last_chat_text)
+            if not message:
+                continue
             await send_response(command, message, bot_commands.get(command), last_chat_id)
 
             logging.info('[%s]: [%s]', last_chat_name, last_chat_text)
