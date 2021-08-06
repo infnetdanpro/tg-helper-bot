@@ -1,6 +1,6 @@
 # This file include function by name
 import os
-import markovify
+import subprocess
 import requests
 import itertools
 
@@ -44,37 +44,9 @@ def command_echo(text: str) -> dict:
 
     return resp.dict()
 
-
-@command('/bad_harry')
-def command_bad_harry(*args) -> dict:
-    """Very bad Harry Potter 18+"""
-    resp = BaseResponse()
-
-    with open('text\\sodom.txt', encoding='utf-8') as f:
-        text_a = f.read()
-
-    with open('text\\potter.txt', encoding='utf-8') as f:
-        text_b = f.read()
-
-    model_a = markovify.Text(text_a)
-    model_b = markovify.Text(text_b)
-    model_combo = markovify.combine([model_a, model_b], [2, 0.1])
-    # model_combo.compile(inplace=True)
-
-    # TODO: use other way to create short sentence
-    for i in itertools.count(1):
-        res = model_combo.make_short_sentence(max_chars=randint(50, 300), tries=randint(50, 500))
-
-        if not res:
-            continue
-        if 'гарри' in res.lower() and res.endswith('.'):
-            text = res[:1].title() + res[1:]
-            resp.result = text
-            return resp.dict()
-
-
 @command('/start')
 def command_start(*args) -> dict:
+    print('11111111111111')
     resp = BaseResponse()
 
     text = ''
@@ -87,3 +59,22 @@ def command_start(*args) -> dict:
     resp.result = text
     
     return resp.dict()
+
+
+@command('/ngrok')
+def command_cmd(password) -> dict:
+    """ Run ngrok tunnel on server: password"""
+    resp = BaseResponse()
+    
+    if password != '82828asdkja':
+        resp.result = 'Bad authorization'
+        return resp.dict()
+    try:
+        r = requests.get('http://127.0.0.1:4040/api/tunnels')
+        resp.result = str(r.json()['tunnels'][0]['public_url'])
+    except Exception as e:
+        resp.result = str(e)
+
+    return resp.dict()
+
+

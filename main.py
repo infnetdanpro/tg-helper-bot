@@ -46,17 +46,18 @@ async def main():
         data: dict = await tg_app.get_updates(offset=offset)
 
         # Serialize data
-        telegram_response = tg_resp = serialize(data.get('result', []))
+        tg_resp = serialize(data.get('result', []))
+
         ready = bool(data['ok'])
         
         if tg_resp.results and ready:
             result = tg_resp.results[0]
             offset = result.update_id
             offset += 1
-            
-            last_chat_text = result.message.text
-            last_chat_id = result.message.chat.id
-            last_chat_name = result.message.chat.first_name
+            result = result.dict()          
+            last_chat_text = result['message']['text']
+            last_chat_id = result['message']['chat']['id']
+            last_chat_name = result['message']['chat']['username']
 
             command, message = command_parser.parse_user_message(last_chat_text)
             if not message:

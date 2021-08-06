@@ -9,10 +9,10 @@ def parse_user_message(user_message: AnyStr = None) -> Union[Tuple[AnyStr, AnySt
     @return: tuple with command/message
     """
 
-    command, text = None, None
+    command, text = None, ' '
 
     if not user_message:
-        return resp
+        return command, text
     
     user_message: List[AnyStr, AnyStr] = user_message.split(' ')
     

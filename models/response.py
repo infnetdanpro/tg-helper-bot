@@ -24,7 +24,7 @@ class BaseResponse(Base):
 
 @dataclass
 class TelegramMessageFrom(Base):
-    id: int
+    id: int = 0
     is_bot: bool = False
     first_name: str = None
     last_name: str = None
@@ -34,7 +34,7 @@ class TelegramMessageFrom(Base):
 
 @dataclass
 class TelegramMessageChat(Base):
-    id: int
+    id: int = 0
     first_name: str = None
     last_name: str = None
     username: str = None
@@ -43,9 +43,9 @@ class TelegramMessageChat(Base):
 
 @dataclass
 class TelegramMessage(Base):
-    date: int
-    text: str
-    message_id: int
+    date: int = 0
+    text: str = None
+    message_id: int = 0
     entities: list = None   # [{"offset":0,"length":5,"type":"bot_command"}]
     from_: TelegramMessageFrom = field(default_factory=TelegramMessageFrom)
     chat: TelegramMessageChat = field(default_factory=TelegramMessageChat)
@@ -55,6 +55,7 @@ class TelegramMessage(Base):
 class TelegramEntity(Base):
     update_id: int = None
     message: TelegramMessage = field(default_factory=TelegramMessage)
+    edited_message: TelegramMessage = field(default_factory=TelegramMessage)
 
 
 
